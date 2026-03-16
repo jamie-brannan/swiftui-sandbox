@@ -5,8 +5,8 @@ import PlaygroundSupport
 
 struct WrappingLayout: Layout {
     
-    var spacing: CGFloat = 8
-    var lineSpacing: CGFloat = 8
+    var spacing: CGFloat = 4
+    var lineSpacing: CGFloat = 4
     var maxRows: Int? = nil
     
     func sizeThatFits(
@@ -30,7 +30,7 @@ struct WrappingLayout: Layout {
                 if let maxRows, rowCount > maxRows { break }
                 
                 x = 0
-                y += rowHeight + lineSpacing
+                y += rowHeight /*+ lineSpacing*/
                 rowHeight = 0
             }
             
@@ -57,7 +57,7 @@ struct WrappingLayout: Layout {
             
             if x + size.width > bounds.maxX {
                 x = bounds.minX
-                y += rowHeight + lineSpacing
+                y += rowHeight/* + lineSpacing*/
                 rowHeight = 0
             }
             
@@ -75,7 +75,7 @@ struct WrappingLayout: Layout {
 struct Item: View, Identifiable {
     let id: UUID = UUID()
     let color: Color
-    let length: Int = Int.random(in: 1...20)
+    let length: Int = Int.random(in: 1...10)
 
     func randomString(_ length: Int) -> String {
         let letters = "abcdefghijklmnopqrstuvwxyz"
@@ -95,6 +95,7 @@ struct Item: View, Identifiable {
     }
 }
 
+/// This doesn't wrap, because child items are to stay together, and not be split across rows
 struct Group: View, Identifiable {
     let id: UUID = UUID()
     let items: [Item]
@@ -107,7 +108,7 @@ struct Group: View, Identifiable {
         HStack(spacing: 0) {
             ForEach(items) { item in
                 item
-                    .padding()
+                    .padding(.trailing, 4)
             }
         }
     }
@@ -129,8 +130,7 @@ enum Data {
     }
 
     var group: Group {
-        let item = self.item
-        let items = (0..<20).map { _ in item }
+        let items = (0..<3).map { _ in self.item } /// Unique item each time
         return Group(items)
     }
 }
@@ -151,6 +151,7 @@ struct MyViewController: View {
             WrappingLayout(spacing: 8, lineSpacing: 2, maxRows: 2) {
                 ForEach(collection) { group in
                     group
+                        .border(.pink)
                 }
             }
             .border(.gray, width: 4)
