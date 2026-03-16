@@ -3,20 +3,26 @@
 import SwiftUI
 import PlaygroundSupport
 
-struct WrappingLayout: Layout {
-    
-    var spacing: CGFloat = 4
+/// A horizontal layout that allows an overflow of non-``Text`` views into a second row that's the right size.
+///
+///  - Parameter interItemSpacing: between each child view, how much trailing space is there?
+///  - Parameter lineSpacing: if there's another row, this will be the spacing between them
+///  - Parameter maxRows: `nil` by default – ⚠️only set if there's a reason to then add a `.clipped()`, cause it'll set the bounds to the calculated bottom of the last permitted row, which enables the cropping with the modifier to be precise.
+
+/// The designers are making rules especially based on web/CSS layouts. This structure mimics css flexbox flow-layouts.
+struct PsuedoFlexbox: Layout {
+    var interItemSpacing: CGFloat = 4
     var lineSpacing: CGFloat = 4
     var maxRows: Int? = nil
-    
+
     func sizeThatFits(
         proposal: ProposedViewSize,
         subviews: Subviews,
         cache: inout ()
     ) -> CGSize {
-        
+
         let maxWidth = proposal.width ?? .infinity
-        
+
         var x: CGFloat = 0
         var y: CGFloat = 0
         var rowHeight: CGFloat = 0
@@ -30,11 +36,11 @@ struct WrappingLayout: Layout {
                 if let maxRows, rowCount > maxRows { break }
                 
                 x = 0
-                y += rowHeight /*+ lineSpacing*/
+                y += rowHeight + lineSpacing
                 rowHeight = 0
             }
             
-            x += size.width + spacing
+            x += size.width + interItemSpacing
             rowHeight = max(rowHeight, size.height)
         }
         
@@ -57,7 +63,7 @@ struct WrappingLayout: Layout {
             
             if x + size.width > bounds.maxX {
                 x = bounds.minX
-                y += rowHeight/* + lineSpacing*/
+                y += rowHeight + lineSpacing
                 rowHeight = 0
             }
             
@@ -66,12 +72,15 @@ struct WrappingLayout: Layout {
                 proposal: ProposedViewSize(size)
             )
             
-            x += size.width + spacing
+            x += size.width + interItemSpacing
             rowHeight = max(rowHeight, size.height)
         }
     }
 }
 
+// MARK: - Preview
+
+// MARK: Mock Views
 struct Item: View, Identifiable {
     let id: UUID = UUID()
     let color: Color
@@ -114,6 +123,7 @@ struct Group: View, Identifiable {
     }
 }
 
+// MARK: Mock Data
 enum Data {
     case red
     case blue
@@ -135,7 +145,9 @@ enum Data {
     }
 }
 
-struct MyViewController: View {
+// MARK: Render
+
+struct SampleRenderView: View {
     let collection: [Group] = [
         Data.red.group,
         Data.yellow.group,
@@ -145,10 +157,10 @@ struct MyViewController: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("Wrapping Layout Sandbox")
+            Text("Pseudo Flexbox Sandbox")
                 .font(.system(.title))
                 .bold()
-            WrappingLayout(spacing: 8, lineSpacing: 2, maxRows: 2) {
+            PsuedoFlexbox(interItemSpacing: 8, lineSpacing: 2, maxRows: nil) {
                 ForEach(collection) { group in
                     group
                         .border(.pink)
@@ -162,6 +174,6 @@ struct MyViewController: View {
 
 /// iPhone 16 like size
 PlaygroundPage.current.setLiveView(
-    MyViewController()
+    SampleRenderView()
         .frame(width: 393, height: 852)
 )
