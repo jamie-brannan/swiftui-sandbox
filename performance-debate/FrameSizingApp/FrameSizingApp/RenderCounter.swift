@@ -32,7 +32,7 @@ final class RenderCounter: ObservableObject {
         signposter.emitEvent(
             "BodyEvaluation",
             id: signpostID,
-            "\(name) body #\(count)"
+            "\(self.name) body #\(self.count)"
         )
     }
 
