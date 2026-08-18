@@ -33,6 +33,7 @@ struct ContentView: View {
             }
             .padding()
             .navigationTitle("Resizing Hybrid")
+            .navigationSubtitle("Guide to Xcode 27 resizing while between frameworks")
         }
     }
 }
@@ -58,8 +59,4 @@ private struct OldViewControllerContainer: UIViewControllerRepresentable {
 
 #Preview {
     ContentView()
-}
-
-#Playground {
-    _ = 1 + 2
 }
