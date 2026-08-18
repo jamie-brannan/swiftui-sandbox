@@ -16,26 +16,47 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
-                Text("SwiftUI")
-                    .font(.largeTitle.bold())
-
-                NavigationLink {
+              List {
+                Section {
+                  NavigationLink {
                     OldViewControllerContainer(
-                        horizontalSizeClass: horizontalSizeClass,
-                        verticalSizeClass: verticalSizeClass
+                      horizontalSizeClass: horizontalSizeClass,
+                      verticalSizeClass: verticalSizeClass
                     )
                     .navigationTitle("Legacy UIKit")
                     .navigationBarTitleDisplayMode(.inline)
-                } label: {
-                    Label("Open legacy ViewController", systemImage: "arrow.right.square")
+                  } label: {
+                    uiKitItem
+                  }
+                } header: {
+                  Text("Sample code in order of priority")
                 }
-                .buttonStyle(.borderedProminent)
+                Section {
+                  Text("TBD")
+                  Text("TBD")
+                  Text("TBD")
+                } header: {
+                  Text("Relevant Apple Developer ressources")
+                }
+              }
             }
-            .padding()
             .navigationTitle("Resizing Hybrid")
             .navigationSubtitle("Guide to Xcode 27 resizing while between frameworks")
         }
     }
+
+  var uiKitItem: some View {
+    Label(title: {
+      VStack(alignment: .leading) {
+        Text("What happens to UIKit legacy")
+        Text("`UIViewControllerRepresentable rendered according to `SizeClass` updates")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+      }
+    }, icon: {
+      Image(systemName: "1.circle")
+    })
+  }
 }
 
 private struct OldViewControllerContainer: UIViewControllerRepresentable {
